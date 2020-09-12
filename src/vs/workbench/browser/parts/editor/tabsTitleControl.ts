@@ -126,6 +126,12 @@ export class TabsTitleControl extends TitleControl {
 				this.updateTabsScrollbarSizing();
 			}
 		}));
+
+		this._register(this.accessor.onDidEditorPartOptionsChange(e => {
+			if (e.oldPartOptions.hideEditorActions !== e.newPartOptions.hideEditorActions) {
+				this.updateHideEditorActions();
+			}
+		}));
 	}
 
 	protected create(parent: HTMLElement): void {
@@ -154,6 +160,9 @@ export class TabsTitleControl extends TitleControl {
 		this.editorToolbarContainer = document.createElement('div');
 		addClass(this.editorToolbarContainer, 'editor-actions');
 		this.tabsAndActionsContainer.appendChild(this.editorToolbarContainer);
+		if (this.accessor.partOptions.hideEditorActions) {
+			this.editorToolbarContainer.style.display = 'none';
+		}
 
 		// Editor Actions Toolbar
 		this.createEditorActionsToolBar(this.editorToolbarContainer);
@@ -198,6 +207,16 @@ export class TabsTitleControl extends TitleControl {
 	private updateBreadcrumbsControl(): void {
 		if (this.breadcrumbsControl && this.breadcrumbsControl.update()) {
 			this.group.relayout(); // relayout when we have a breadcrumbs and when update changed its hidden-status
+		}
+	}
+
+	private updateHideEditorActions(): void {
+		const editorActionsContainer = this.editorToolbarContainer as HTMLElement;
+
+		if (this.accessor.partOptions.hideEditorActions) {
+			editorActionsContainer.style.display = 'none';
+		} else {
+			editorActionsContainer.style.display = 'initial';
 		}
 	}
 
@@ -527,7 +546,8 @@ export class TabsTitleControl extends TitleControl {
 			oldOptions.pinnedTabSizing !== newOptions.pinnedTabSizing ||
 			oldOptions.showIcons !== newOptions.showIcons ||
 			oldOptions.hasIcons !== newOptions.hasIcons ||
-			oldOptions.highlightModifiedTabs !== newOptions.highlightModifiedTabs
+			oldOptions.highlightModifiedTabs !== newOptions.highlightModifiedTabs ||
+			oldOptions.hideEditorActions !== newOptions.hideEditorActions
 		) {
 			this.redraw();
 		}

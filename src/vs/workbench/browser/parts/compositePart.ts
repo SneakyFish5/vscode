@@ -390,6 +390,7 @@ export abstract class CompositePart<T extends Composite> extends Part {
 
 		// Right Actions Container
 		const titleActionsContainer = append(titleArea, $('.title-actions'));
+		titleActionsContainer.style.display = 'none';
 
 		// Toolbar
 		this.toolBar = this._register(new ToolBar(titleActionsContainer, this.contextMenuService, {
